@@ -1,79 +1,231 @@
-document.getElementById('searchButton').addEventListener('click', function() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    fetch(`https://pokeapi.co/api/v2/pokemon/${query}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Pokémon not found');
-            }
-            return response.json();
-        })
-        .then(data => {
-            displayResults(data);
-        })
-        .catch(error => {
-            alert(error.message);
-        });
+// Endpoints
+const API_BASE = 'https://pokeapi.co/api/v2/pokemon/';
+const TYPE_ENDPOINT = 'https://pokeapi.co/api/v2/type';
+const ABILITY_ENDPOINT = 'https://pokeapi.co/api/v2/ability?limit=327';
+
+// Elementos del DOM
+const inputEl = document.getElementById('pokemon-input');
+const searchBtn = document.getElementById('search-btn');
+const listBtn = document.getElementById('list-btn');
+const typeSelect = document.getElementById('filter-type');
+const abilitySelect = document.getElementById('filter-ability');
+const filterBtn = document.getElementById('apply-filter-btn');
+const createGrpBtn = document.getElementById('create-group-btn');
+const groupNameEl = document.getElementById('group-name');
+const results = document.getElementById('results');
+const errorEl = document.getElementById('error-message');
+const groupsCont = document.getElementById('groups');
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', () => {
+  loadTypeOptions();
+  loadAbilityOptions();
 });
 
-document.getElementById('listAllButton').addEventListener('click', function() {
-    fetch('https://pokeapi.co/api/v2/pokemon?limit=100')
-        .then(response => response.json())
-        .then(data => {
-            const resultsContainer = document.getElementById('resultsContainer');
-            resultsContainer.innerHTML = '';
-            data.results.forEach(pokemon => {
-                const listItem = document.createElement('p');
-                listItem.textContent = pokemon.name;
-                resultsContainer.appendChild(listItem);
-            });
-            document.getElementById('backToSearchButton').style.display = 'block';
-            document.getElementById('searchButton').style.display = 'none';
-            document.getElementById('listAllButton').style.display = 'none';
-        })
-        .catch(error => {
-            alert('Error fetching Pokémon list');
-        });
+// Populate tipos
+async function loadTypeOptions() {
+  try {
+    const res = await fetch(TYPE_ENDPOINT);
+    const data = await res.json();
+    data.results.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.name;
+      opt.textContent = t.name;
+      typeSelect.append(opt);
+    });
+  } catch (error) {
+    console.error('Error al cargar tipos:', error);
+  }
+}
+
+// Populate habilidades
+async function loadAbilityOptions() {
+  try {
+    const res = await fetch(ABILITY_ENDPOINT);
+    const data = await res.json();
+    data.results.forEach(a => {
+      const opt = document.createElement('option');
+      opt.value = a.name;
+      opt.textContent = a.name;
+      abilitySelect.append(opt);
+    });
+  } catch (error) {
+    console.error('Error al cargar habilidades:', error);
+  }
+}
+
+// Listeners
+searchBtn.addEventListener('click', () => handleSearch());
+listBtn.addEventListener('click', () => fetchPokemonList());
+filterBtn.addEventListener('click', () => handleFilter());
+createGrpBtn.addEventListener('click', () => createGroup());
+
+document.addEventListener('click', event => {
+  if (event.target.classList.contains('delete-group-btn')) {
+    event.target.closest('.group').remove();
+  }
 });
 
-// Add event listener for the back button
+// Ejemplo de uso en fetch:
+async function handleSearch() {
+  const name = inputEl.value.trim().toLowerCase();
+  if (!name) return showError('Ingresa un nombre de Pokémon');
+  clearUI();
+  toggleLoading(true);
+  try {
+    const res = await fetch(API_BASE + name);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    renderPokemonCard(data);
+  } catch {
+    showError('Pokémon no encontrado.');
+  } finally {
+    toggleLoading(false);
+  }
+}
 
-document.getElementById('backToSearchButton').addEventListener('click', function() {
-    document.getElementById('resultsContainer').innerHTML = '';
-    document.getElementById('backToSearchButton').style.display = 'none';
-    document.getElementById('searchButton').style.display = 'block';
-    document.getElementById('listAllButton').style.display = 'block';
-});
 
-function displayResults(pokemon) {
-    const resultsContainer = document.getElementById('resultsContainer');
-    resultsContainer.innerHTML = '';
+// Listar primeros 151
+async function fetchPokemonList() {
+  clearUI();
+  toggleLoading(true);
+  try {
+    const res = await fetch(`${API_BASE}?limit=151`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    renderPokemonList(data.results);
+  } catch {
+    showError('Error al cargar lista de Pokémon.');
+  } finally {
+    toggleLoading(false);
+  }
+}
 
-    const resultItem = document.createElement('div');
-    resultItem.classList.add('result-item');
+// Filtrar por tipo/ habilidad
+async function handleFilter() {
+  const type = typeSelect.value;
+  const ability = abilitySelect.value;
+  if (!type && !ability) return showError('Selecciona un tipo o habilidad.');
+  clearUI();
 
-    const img = document.createElement('img');
-    img.src = pokemon.sprites.front_default;
-    resultItem.appendChild(img);
+  let names = [];
+  try {
+    if (type) {
+      const res = await fetch(`${TYPE_ENDPOINT}/${type}`);
+      const data = await res.json();
+      names = data.pokemon.map(p => p.pokemon.name);
+    }
+    if (ability) {
+      const res2 = await fetch(`${ABILITY_ENDPOINT.replace('?limit=327', '')}/${ability}`);
+      const data2 = await res2.json();
+      const abilNames = data2.pokemon.map(p => p.pokemon.name);
+      names = type ? names.filter(n => abilNames.includes(n)) : abilNames;
+    }
+    if (names.length === 0) return showError('No se encontraron Pokémon con los filtros seleccionados.');
 
-    const name = document.createElement('h3');
-    name.textContent = pokemon.name;
-    resultItem.appendChild(name);
+    // Render tarjetas seleccionadas (hasta 100 para performance)
+    names.slice(0, 100).forEach(async name => {
+      try {
+        const r = await fetch(API_BASE + name);
+        if (!r.ok) return;
+        const p = await r.json();
+        renderPokemonCard(p);
+      } catch (error) {
+        console.error('Error al renderizar Pokémon:', error);
+      }
+    });
+  } catch (error) {
+    showError('Error al aplicar filtros.');
+    console.error('Error en handleFilter:', error);
+  }
+}
 
-    const type = document.createElement('p');
-    type.textContent = `Type: ${pokemon.types.map(t => t.type.name).join(', ')}`;
-    resultItem.appendChild(type);
+// Crear grupo con seleccionados
+async function createGroup() {
+  clearUI();
+  const name = groupNameEl.value.trim();
+  const checked = Array.from(document.querySelectorAll('.pokemon-card input:checked'))
+    .map(cb => cb.getAttribute('data-name'));
+  if (!name) return showError('Ingresa un nombre de grupo.');
+  if (checked.length === 0) return showError('Selecciona al menos un Pokémon.');
 
-    const height = document.createElement('p');
-    height.textContent = `Height: ${pokemon.height}`;
-    resultItem.appendChild(height);
+  const sec = document.createElement('section');
+  sec.className = 'group';
+  sec.innerHTML = `<h2>${name}<button class="delete-group-btn">×</button></h2><div class="group-results"></div>`;
+  groupsCont.append(sec);
+  const container = sec.querySelector('.group-results');
+  for (let nm of checked) {
+    try {
+      const res = await fetch(API_BASE + nm);
+      if (!res.ok) continue;
+      const p = await res.json();
+      const c = document.createElement('div');
+      c.className = 'pokemon-card';
+      c.innerHTML = `
+        <img src="${p.sprites.front_default}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <p>Tipo: ${p.types.map(t => t.type.name).join(', ')}</p>
+        <p>Altura: ${p.height / 10} m</p>
+        <p>Peso: ${p.weight / 10} kg</p>
+        <p>Hab: ${p.abilities.map(a => a.ability.name).join(', ')}</p>
+      `;
+      container.appendChild(c);
+    } catch (error) {
+      console.error('Error al agregar Pokémon al grupo:', error);
+    }
+  }
+  groupNameEl.value = '';
+}
 
-    const weight = document.createElement('p');
-    weight.textContent = `Weight: ${pokemon.weight}`;
-    resultItem.appendChild(weight);
+// Render helpers
+function renderPokemonCard(p) {
+  const card = document.createElement('div');
+  card.className = 'pokemon-card';
+  card.innerHTML = `
+    <input type="checkbox" data-name="${p.name}">
+    <img src="${p.sprites.front_default}" alt="${p.name}">
+    <h3>${p.name}</h3>
+    <p>Tipo: ${p.types.map(t => t.type.name).join(', ')}</p>
+    <p>Altura: ${p.height / 10} m</p>
+    <p>Peso: ${p.weight / 10} kg</p>
+    <p>Hab: ${p.abilities.map(a => a.ability.name).join(', ')}</p>
+  `;
+  results.append(card);
+}
 
-    const abilities = document.createElement('p');
-    abilities.textContent = `Abilities: ${pokemon.abilities.map(a => a.ability.name).join(', ')}`;
-    resultItem.appendChild(abilities);
 
-    resultsContainer.appendChild(resultItem);
-} 
+function toggleLoading(show) {
+  const ld = document.getElementById('loading');
+  if (!ld) return;            // si no existe, salimos
+  ld.classList.toggle('hidden', !show);
+}
+
+// Ejemplo de uso en fetch:
+async function handleSearch() {
+  const name = inputEl.value.trim().toLowerCase();
+  if (!name) return showError('Ingresa un nombre de Pokémon');
+  clearUI();
+  toggleLoading(true);
+  try {
+    const res = await fetch(API_BASE + name);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    renderPokemonCard(data);
+  } catch {
+    showError('Pokémon no encontrado.');
+  } finally {
+    toggleLoading(false);
+  }
+}
+
+function clearUI() {
+  results.innerHTML = '';
+  errorEl.classList.add('hidden');
+  toggleLoading(false);
+}
+
+function showError(msg) {
+  errorEl.textContent = msg;
+  errorEl.classList.remove('hidden');
+  toggleLoading(false);
+}

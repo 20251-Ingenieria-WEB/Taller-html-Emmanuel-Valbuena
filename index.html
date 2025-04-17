@@ -1,20 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokémon Search App</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mini Pokédex Pokémon</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app-container">
-        <h1>Pokémon Search</h1>
-        <input type="text" id="searchInput" placeholder="Search Pokémon...">
-        <button id="searchButton">Search</button>
-        <button id="listAllButton">List All Pokémon</button>
-        <button id="backToSearchButton" style="display: none;">Back to Search</button>
-        <div id="resultsContainer" class="results-container"></div>
-    </div>
-    <script src="app.js"></script>
+  <header>
+    <h1>Mini Pokédex Pokémon</h1>
+  </header>
+
+  <main>
+    <!-- Búsqueda y Listado -->
+    <section class="controls">
+      <div class="search-section">
+        <input type="text" id="pokemon-input" placeholder="Ej. Pikachu">
+        <button id="search-btn">Buscar</button>
+        <button id="list-btn">Listar Pokémons</button>
+      </div>
+      <div class="filter-section">
+        <select id="filter-type"><option value="">Filtrar por tipo</option></select>
+        <select id="filter-ability"><option value="">Filtrar por habilidad</option></select>
+        <button id="apply-filter-btn">Aplicar Filtro</button>
+      </div>
+    </section>
+
+    <!-- Crear grupos -->
+    <section class="group-creation">
+      <input type="text" id="group-name" placeholder="Nombre de Grupo">
+      <button id="create-group-btn">Crear Grupo</button>
+      <div id="error-message" class="error hidden"></div>
+    </section>
+
+    <!-- Indicador de carga -->
+    <section id="loading" class="loading hidden">Cargando...</section>
+
+    <!-- Resultados dinámicos -->
+    <section id="results" class="results-flex"></section>
+
+    <!-- Secciones de grupos -->
+    <section id="groups" class="groups-container"></section>
+  </main>
+
+  <script src="app.js"></script>
 </body>
-</html> 
+</html>

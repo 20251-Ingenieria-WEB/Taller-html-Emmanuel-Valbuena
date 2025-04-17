@@ -1,78 +1,145 @@
+/* Estilos generales */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  color: #333;
+}
+header {
+  background: #ef5350;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+.loading {
+  text-align: center;
+  font-weight: bold;
+  margin: 1rem;
+  font-size: 1.2rem;
 }
 
-.app-container {
-    text-align: center;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+/* .hidden ya oculta elementos */
+.hidden { display: none; }
+
+
+/* Controles: búsqueda, listado y filtros */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1rem;
+}
+.search-section,
+.filter-section,
+.group-creation {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.search-section input,
+.group-creation input,
+.filter-section select {
+  padding: 0.5rem;
+  border: 2px solid #ef5350;
+  border-radius: 4px;
+  min-width: 150px;
+}
+.search-section button,
+.filter-section button,
+#create-group-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#search-btn { background: #ef5350; }
+#search-btn:hover { background: #d32f2f; }
+#list-btn { background: #42a5f5; }
+#list-btn:hover { background: #1e88e5; }
+#apply-filter-btn { background: #ffa726; }
+#apply-filter-btn:hover { background: #fb8c00; }
+#create-group-btn { background: #66bb6a; }
+#create-group-btn:hover { background: #388e3c; }
+
+.error {
+  text-align: center;
+  color: #c62828;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+.hidden { display: none; }
+
+/* Resultados y grupos: flex y centrado */
+.results-flex,
+.group-results {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1rem;
+}
+.groups-container {
+  margin-top: 2rem;
+  padding: 1rem;
+}
+.group {
+  margin-bottom: 2rem;
+}
+.group h2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.delete-group-btn {
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+.delete-group-btn:hover { background: #c62828; }
+
+/* Tarjeta de Pokémon */
+.pokemon-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-align: center;
+  padding: 1rem;
+  width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pokemon-card:hover { transform: translateY(-5px); }
+.pokemon-card img {
+  width: 96px;
+  height: 96px;
+}
+.pokemon-card h3 {
+  margin: 0.5rem 0;
+  text-transform: capitalize;
+}
+.pokemon-card p {
+  margin: 0.25rem 0;
+  font-size: 0.8rem;
+  color: #666;
+}
+.pokemon-card input[type="checkbox"] {
+  margin-bottom: 0.5rem;
+  cursor: pointer;
 }
 
-input[type="text"] {
-    padding: 10px;
-    width: 200px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-bottom: 10px;
+.pokemon-list li {
+  background: white;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
 }
-
-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-#backToSearchButton {
-    display: none;
-    margin: 10px auto;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#backToSearchButton:hover {
-    background-color: #218838;
-}
-
-.results-container {
-    margin-top: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-}
-
-.result-item {
-    flex: 1 1 150px;
-    max-width: 150px;
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 4px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.result-item img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 4px;
-} 
