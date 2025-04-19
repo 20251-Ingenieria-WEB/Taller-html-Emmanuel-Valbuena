@@ -28,12 +28,12 @@
 
 🎮 Funcionalidades Principales
 
-🔍 Buscar	Escribe un nombre como pikachu y presiona Buscar.
-📋 Listar	Pulsa Listar Pokémons para ver los 151 primeros.
-🎯 Filtrar	Usa los menús para filtrar por tipo o habilidad.
-✅ Seleccionar	Marca las casillas de Pokémon para agruparlos.
-🧠 Mostrar más	Cada tarjeta muestra 3 atributos básicos y permite expandir para ver más.
-🛠 Crear Grupo	Asigna nombre al grupo y se crea automáticamente con sus tarjetas.
+* 🔍 Buscar	Escribe un nombre como pikachu y presiona Buscar.
+* 📋 Listar	Pulsa Listar Pokémons para ver los 151 primeros.
+* 🎯 Filtrar	Usa los menús para filtrar por tipo o habilidad.
+* ✅ Seleccionar	Marca las casillas de Pokémon para agruparlos.
+* 🧠 Mostrar más	Cada tarjeta muestra 3 atributos básicos y permite expandir para ver más.
+* 🛠 Crear Grupo	Asigna nombre al grupo y se crea automáticamente con sus tarjetas.
 
 ---
 🤝 Créditos
