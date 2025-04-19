@@ -17,7 +17,7 @@
 
 1. **Clona el repositorio**  
    ```bash
-   git clone https://github.com/tu-usuario/mini-pokedex.git
+   git clone https://github.com/20251-Ingenieria-WEB/Taller-html-Emmanuel-Valbuena.git
    cd mini-pokedex
    
 2. Puedes hacer doble clic en index.html o usar una extensión como Live Server de VSCode.
