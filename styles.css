@@ -143,3 +143,24 @@ header {
   display: flex;
   align-items: center;
 }
+
+/* Estilo para el toggle Mostrar más 🔍 */
+.toggle-info-btn {
+  background: #66bb6a;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  transition: background 0.2s;
+}
+.toggle-info-btn:hover {
+  background: #388e3c;
+}
+.toggle-info-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #66bb6a;
+}
+/* Estilo para el botón de "Crear grupo" */
